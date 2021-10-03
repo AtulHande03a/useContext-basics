@@ -1,21 +1,25 @@
-import { useState } from "react";
+import React, { useState, useContext } from "react";
 import { data } from "./data";
 
-const PropDrilling = () => {
+const PersonContext = React.createContext();
+//two components - provider , consumer
+
+const ContextApi = () => {
   const [people, setPeople] = useState(data);
   const removePerson = (id) => {
     setPeople(people.filter((person) => person.id !== id));
   };
 
   return (
-    <div>
+    <PersonContext.Provider value={{ removePerson ,people}}>
       <h2>Prop Drilling</h2>
-      <List people={people} removePerson={removePerson} />
-    </div>
+      <List  />
+    </PersonContext.Provider>
   );
 };
 
-const List = ({ people, removePerson }) => {
+const List = () => {
+  const { people } = useContext(PersonContext)
   return (
     <>
       {people.map((person) => {
@@ -23,7 +27,7 @@ const List = ({ people, removePerson }) => {
           <SinglePerson
             key={person.id}
             {...person}
-            removePerson={removePerson}
+            
           />
         );
       })}
@@ -31,7 +35,8 @@ const List = ({ people, removePerson }) => {
   );
 };
 
-const SinglePerson = ({ id, name, removePerson }) => {
+const SinglePerson = ({ id, name }) => {
+  const { removePerson } = useContext(PersonContext);
   return (
     <div className="item">
       <h4>{name}</h4>
@@ -40,4 +45,4 @@ const SinglePerson = ({ id, name, removePerson }) => {
   );
 };
 
-export default PropDrilling;
+export default ContextApi;
